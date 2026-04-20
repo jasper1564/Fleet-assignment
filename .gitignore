@@ -1,0 +1,28 @@
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+
+# Generated analysis outputs
+result_*.csv
+result_*.txt
+airport_spatiotemporal_network*.html
+*.png
+
+# Common generated result folders
+模型/原始运行结果/
+模型/需求还原运行结果/
+模型/鲁棒性/
+运行结果分析/运行结果*/
