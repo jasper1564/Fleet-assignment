@@ -1,0 +1,2 @@
+﻿Scenario_Count,Demand_CV,Demand_Distribution,Random_Seed,Turnaround_Min,Objective_Value,Expected_Revenue,Operating_Cost,Expected_Profit,Expected_Unmet_Demand,Average_Load_Factor(%),Weighted_Load_Factor(%),Positive_Shadow_Price_Leg_Count
+5,0.2,negbinom,42,40,5464667.49,11891210.82,6426543.33,5464667.49,13686.6,86.0,87.48,549

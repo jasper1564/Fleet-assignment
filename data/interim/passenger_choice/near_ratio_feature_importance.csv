@@ -1,0 +1,10 @@
+﻿feature,description,mdi_importance,permutation_importance,rank_score,model_name,target
+class_rank,票价等级序号,0.4030257230572201,0.2894251047574333,1.0,near_ratio_model,near_ratio
+relative_fare,相对票价,0.3626392291978247,0.18676738480735483,2.0,near_ratio_model,near_ratio
+od_n_products,OD产品数,0.06598020945388523,0.06846646283311844,3.5,near_ratio_model,near_ratio
+duration_min,飞行时长(分钟),0.06612038668371734,0.046712047436170204,3.5,near_ratio_model,near_ratio
+host_share,主航司市场份额,0.05769622476161851,0.04648026604190941,5.0,near_ratio_model,near_ratio
+n_stops,中转次数,0.013705474446170398,0.024606411902083937,6.0,near_ratio_model,near_ratio
+arr_period,到达时段,0.012337374725639458,0.01610871915207295,7.5,near_ratio_model,near_ratio
+dep_period,起飞时段,0.012378116094480248,0.014519371417347281,7.5,near_ratio_model,near_ratio
+is_BA,是否为BA航班,0.006117261579444004,0.00803733126749374,9.0,near_ratio_model,near_ratio

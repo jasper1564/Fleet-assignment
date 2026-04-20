@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+// 鍦ㄥ懡浠よ杈撳叆python -m http.server 8000   娴忚鍣ㄨ闂細http://localhost:8000/index.html
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>鑸彮缃戠粶鏀剁泭涓庤繍鍔涘垎閰嶈瘖鏂华琛ㄧ洏</title>
+    <!-- 寮曞叆 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 寮曞叆 PapaParse 鐢ㄤ簬鍦ㄥ墠绔洿鎺ヨВ鏋愭湰鍦?CSV 鏂囦欢 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { margin: 0; color: #2c3e50; }
+        .header p { color: #7f8c8d; font-size: 14px; }
+        
+        .dashboard-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 20px; }
+        .card-full { grid-column: 1 / -1; }
+        .chart-container { width: 100%; height: 400px; }
+        .chart-container-large { width: 100%; height: 500px; }
+        
+        h3 { margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; color: #2980b9; font-size: 16px; }
+        
+        /* 閿欒鎻愮ず妗?*/
+        #error-msg { display: none; background: #e74c3c; color: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: bold;}
+        
+        /* 浜や簰鎺у埗鍖?*/
+        .control-panel { background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        select { padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #bdc3c7; width: 300px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>馃洬 FAP-NRM 缃戠粶鏀剁泭涓庤繍鍔涜瘖鏂华琛ㄧ洏</h1>
+        <p>鏈湴璇诲彇 CSV 鏁版嵁 | 濡傛灉鐪嬩笉鍒板浘琛紝璇风‘淇濅綘鐨勬祻瑙堝櫒鍏佽璇诲彇鏈湴鏂囦欢锛堟垨灏嗘枃浠堕儴缃插湪鏈湴鏈嶅姟鍣ㄤ笂锛?/p>
+    </div>
+    
+    <div id="error-msg">鏃犳硶鍔犺浇 CSV 鏁版嵁锛岃纭繚鎵€鏈?result_*.csv 鏂囦欢涓庢 HTML 鏂囦欢鍦ㄥ悓涓€鐩綍涓嬶紒</div>
+
+    <div class="dashboard-container">
+        
+        <!-- 鍥捐〃 1: 鑸瀹㈠骇鐜囦笌褰卞瓙浠锋牸鍥涜薄闄愬垎鏋?-->
+        <div class="card card-full">
+            <h3>1. 缃戠粶鐡堕璇婃柇锛氬搴х巼 vs 褰卞瓙浠锋牸 (姘旀场澶у皬=搴т綅鏁?</h3>
+            <div id="chart-quadrant" class="chart-container-large"></div>
+            <p style="font-size: 12px; color: #7f8c8d; text-align: center;">馃挕 鍙充笂瑙掍负鏋佸害鎷ユ尋涓旈珮浠峰€肩殑鐡堕鑸锛涚孩鑹蹭唬琛ㄢ€滄湭婊¤浇浣嗘湁鏈弧瓒抽渶姹傗€濓紝闇€鎺掓煡缃戠粶绾ц仈闄愬埗銆?/p>
+        </div>
+
+        <!-- 鍥捐〃 2: 甯傚満闇€姹傛弧瓒冲害 (Top 浜у搧) -->
+        <div class="card">
+            <h3>2. 甯傚満鐥涚偣鍙戠幇锛氫骇鍝侀渶姹傛弧瓒冲害 (Top 40)</h3>
+            <div id="chart-demand" class="chart-container"></div>
+        </div>
+
+        <!-- 鍥捐〃 3: 鍗堝鍋滃満鍒嗗竷 -->
+        <div class="card">
+            <h3>3. 璧勬簮鐩樼偣锛氳繃澶滃仠鏈哄潽鍗犵敤鐑姏鍥?/h3>
+            <div id="chart-ground" class="chart-container"></div>
+        </div>
+
+        <!-- 鍥捐〃 4: 寰璇婃柇鍣?(鑱斿姩鍒嗘瀽) -->
+        <div class="card card-full">
+            <h3>4. 寰閫忚锛氫负浠€涔堣繖涓骇鍝佺殑闇€姹傛病鏈夎婊¤冻锛?/h3>
+            <div class="control-panel">
+                <label for="productSelect"><strong>閫夋嫨涓€涓瓨鍦ㄢ€滄湭婊¤冻闇€姹傗€濈殑浜у搧锛?/strong></label>
+                <select id="productSelect">
+                    <option value="">姝ｅ湪鍔犺浇浜у搧鍒楄〃...</option>
+                </select>
+                <span style="font-size: 13px; color: #555; margin-left: 10px;">閫夋嫨鍚庯紝涓嬫柟鍥捐〃灏嗗睍绀鸿浜у搧鎵€缁忚繃鑸鐨勭墿鐞嗘嫢鎸ゆ儏鍐点€?/span>
+            </div>
+            <div id="chart-drilldown" class="chart-container"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // 瀛樺偍瑙ｆ瀽鍚庣殑鏁版嵁
+        const db = {
+            comprehensive: [],
+            ground: [],
+            legLoad: [],
+            shadowPrice: []
+        };
+
+        // 寮傛璇诲彇骞惰В鏋愬崟涓?CSV
+        function fetchAndParseCSV(filename) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(filename, {
+                    download: true,
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                    error: function(err) {
+                        console.error("鍔犺浇鏂囦欢澶辫触:", filename, err);
+                        reject(err);
+                    }
+                });
+            });
+        }
+
+        // 涓诲垵濮嬪寲鍑芥暟
+        async function initDashboard() {
+            try {
+                // 骞跺彂鍔犺浇 4 涓?CSV 鏂囦欢
+                const [compData, groundData, legData, shadowData] = await Promise.all([
+                    fetchAndParseCSV('comprehensive_analysis.csv'),
+                    fetchAndParseCSV('ground_status.csv'),
+                    fetchAndParseCSV('leg_load_factor.csv'),
+                    fetchAndParseCSV('shadow_prices.csv')
+                ]);
+
+                db.comprehensive = compData;
+                db.ground = groundData;
+                db.legLoad = legData;
+                db.shadowPrice = shadowData;
+
+                console.log("鏁版嵁鍔犺浇瀹屾垚:", db);
+                
+                // 娓叉煋鍥捐〃
+                renderQuadrantChart();
+                renderDemandChart();
+                renderGroundChart();
+                setupDrilldown();
+
+            } catch (error) {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // ==========================================
+        // 鍥捐〃 1: 鍥涜薄闄愭暎鐐瑰浘
+        // ==========================================
+        function renderQuadrantChart() {
+            const chart = echarts.init(document.getElementById('chart-quadrant'));
+            
+            // 灏?shadow price 鍜?load factor 鎸夌収 Leg 杩炵粨璧锋潵
+            let mergedData = [];
+            db.legLoad.forEach(leg => {
+                let shadowInfo = db.shadowPrice.find(s => s.Leg === leg.Leg);
+                let price = shadowInfo ? shadowInfo.Shadow_Price : 0;
+                mergedData.push([
+                    leg['Load_Factor(%)'], // x杞?
+                    price,                 // y杞?
+                    leg.Seat_Capacity,     // 姘旀场澶у皬
+                    leg.Leg,               // 鍚嶇О
+                    leg.Bottleneck_or_Cost_Constrained // 棰滆壊鍒嗙被
+                ]);
+            });
+
+            // 鍒嗕负涓ょ粍搴忓垪锛氭櫘閫氳埅娈?鍜?鍙楅檺鑸
+            const normalData = mergedData.filter(d => d[4] === "No");
+            const constrainedData = mergedData.filter(d => d[4] === "Yes");
+
+            const option = {
+                tooltip: {
+                    formatter: function (obj) {
+                        var val = obj.value;
+                        return `<b>鑸: ${val[3]}</b><br/>
+                                瀹㈠骇鐜? ${val[0]}%<br/>
+                                褰卞瓙浠锋牸: 楼${val[1]}<br/>
+                                鍒嗛厤搴т綅鏁? ${val[2]}<br/>
+                                寮傚父鍙楅檺: ${val[4]}`;
+                    }
+                },
+                legend: { data: ['姝ｅ父鑸 (No)', '鍙楅檺/鐡堕鐗虹壊鑸 (Yes)'] },
+                xAxis: { type: 'value', name: '瀹㈠骇鐜?(%)', max: 102, min: 0 },
+                yAxis: { type: 'value', name: '鑸褰卞瓙浠锋牸 (Bid Price)' },
+                series: [
+                    {
+                        name: '姝ｅ父鑸 (No)',
+                        type: 'scatter',
+                        itemStyle: { color: '#3498db', opacity: 0.6 },
+                        data: normalData,
+                        symbolSize: function (data) { return Math.max(data[2] / 5, 5); } // 鎸夊骇浣嶇缉鏀炬皵娉?
+                    },
+                    {
+                        name: '鍙楅檺/鐡堕鐗虹壊鑸 (Yes)',
+                        type: 'scatter',
+                        itemStyle: { color: '#e74c3c', opacity: 0.8 },
+                        data: constrainedData,
+                        symbolSize: function (data) { return Math.max(data[2] / 5, 8); }
+                    }
+                ]
+            };
+            chart.setOption(option);
+        }
+
+        // ==========================================
+        // 鍥捐〃 2: 闇€姹傛弧瓒冲害鍫嗗彔鏌辩姸鍥?
+        // ==========================================
+        function renderDemandChart() {
+            const chart = echarts.init(document.getElementById('chart-demand'));
+            
+            // 鎸戦€夐渶姹傛渶澶х殑鍓?40 涓骇鍝?
+            let topProducts = [...db.comprehensive]
+                .sort((a, b) => b.Max_Demand - a.Max_Demand)
+                .slice(0, 40);
+
+            let xAxisData = topProducts.map(p => p.Product);
+            let soldData = topProducts.map(p => p.Sold_Tickets);
+            let unmetData = topProducts.map(p => p.Unmet_Demand);
+
+            const option = {
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: { data: ['宸插敭鍑?(婊¤冻)', '鏈弧瓒抽渶姹?] },
+                grid: { left: '3%', right: '4%', bottom: '15%', containLabel: true },
+                xAxis: { 
+                    type: 'category', 
+                    data: xAxisData,
+                    axisLabel: { interval: 0, rotate: 45, fontSize: 10 }
+                },
+                yAxis: { type: 'value', name: '鏃呭浜烘暟' },
+                series: [
+                    {
+                        name: '宸插敭鍑?(婊¤冻)',
+                        type: 'bar',
+                        stack: 'total',
+                        itemStyle: { color: '#2ecc71' },
+                        data: soldData
+                    },
+                    {
+                        name: '鏈弧瓒抽渶姹?,
+                        type: 'bar',
+                        stack: 'total',
+                        itemStyle: { color: '#e74c3c' },
+                        data: unmetData
+                    }
+                ]
+            };
+            chart.setOption(option);
+        }
+
+        // ==========================================
+        // 鍥捐〃 3: 鍗堝鍋滃満鐑姏鍥?
+        // ==========================================
+        function renderGroundChart() {
+            const chart = echarts.init(document.getElementById('chart-ground'));
+            
+            // 鎻愬彇鍞竴鐨勬満鍦哄拰鏈哄瀷
+            let airportsSet = new Set();
+            let fleetsSet = new Set();
+            db.ground.forEach(item => {
+                airportsSet.add(item.Airport);
+                fleetsSet.add(item.Fleet);
+            });
+            let airports = Array.from(airportsSet).sort();
+            let fleets = Array.from(fleetsSet).sort();
+
+            // 鏋勯€?Echarts 鎵€闇€鐨?data 鏁扮粍 [y(鏈哄満绱㈠紩), x(鏈哄瀷绱㈠紩), 鍊糫
+            let heatmapData = [];
+            db.ground.forEach(item => {
+                let x = fleets.indexOf(item.Fleet);
+                let y = airports.indexOf(item.Airport);
+                heatmapData.push([x, y, item.Grounded_Count]);
+            });
+
+            const option = {
+                tooltip: { position: 'top' },
+                grid: { height: '70%', top: '10%' },
+                xAxis: { type: 'category', data: fleets, splitArea: { show: true }, axisLabel: {rotate: 30, fontSize: 10} },
+                yAxis: { type: 'category', data: airports, splitArea: { show: true }, axisLabel: {fontSize: 10} },
+                visualMap: {
+                    min: 0, max: 20, // 鍙牴鎹疄闄呮暟鎹皟鏁?max
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '0%',
+                    inRange: { color: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'] } // Github 椋庢牸鐑姏鑹?
+                },
+                series: [{
+                    name: '鍋滃満鏁伴噺',
+                    type: 'heatmap',
+                    data: heatmapData,
+                    label: { show: true },
+                    emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.5)' } }
+                }]
+            };
+            chart.setOption(option);
+        }
+
+        // ==========================================
+        // 鍥捐〃 4: 鑱斿姩寰璇婃柇 (閽诲彇鍒嗘瀽)
+        // ==========================================
+        let drilldownChart = null;
+
+        function setupDrilldown() {
+            const selectEl = document.getElementById('productSelect');
+            
+            // 绛涢€夊嚭纭疄瀛樺湪鏈弧瓒抽渶姹傜殑浜у搧
+            let problematicProducts = db.comprehensive.filter(p => p.Unmet_Demand > 0.01);
+            
+            selectEl.innerHTML = '<option value="">-- 璇烽€夋嫨闇€瑕佽瘖鏂殑浜у搧 --</option>';
+            problematicProducts.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.Product;
+                opt.textContent = `${p.Product} (鎬婚渶姹?${p.Max_Demand} | 婕忔帓:${p.Unmet_Demand}) | 鑸:${p.Legs}`;
+                selectEl.appendChild(opt);
+            });
+
+            drilldownChart = echarts.init(document.getElementById('chart-drilldown'));
+
+            selectEl.addEventListener('change', function() {
+                const selectedProdId = this.value;
+                if (!selectedProdId) {
+                    drilldownChart.clear();
+                    return;
+                }
+                updateDrilldownChart(selectedProdId);
+            });
+        }
+
+        function updateDrilldownChart(productId) {
+            // 鑾峰彇浜у搧淇℃伅
+            const prodInfo = db.comprehensive.find(p => p.Product === productId);
+            if (!prodInfo) return;
+
+            const legsList = prodInfo.Legs.split(' -> ');
+            
+            let categories = [];
+            let capacityData = [];
+            let passengerData = [];
+            let shadowPriceData = [];
+
+            legsList.forEach(legName => {
+                const legDetail = db.legLoad.find(l => l.Leg === legName);
+                const shadowDetail = db.shadowPrice.find(s => s.Leg === legName);
+                
+                categories.push(legName);
+                if (legDetail) {
+                    capacityData.push(legDetail.Seat_Capacity);
+                    passengerData.push(legDetail.Total_Passengers);
+                } else {
+                    capacityData.push(0); passengerData.push(0);
+                }
+                shadowPriceData.push(shadowDetail ? shadowDetail.Shadow_Price : 0);
+            });
+
+            const option = {
+                title: { text: `璇婃柇缁撴灉: 瀵艰嚧浜у搧 ${productId} 琚爫鎺夌殑鑸鐡堕`, textStyle: {fontSize: 14} },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+                legend: { data: ['鐗╃悊搴т綅瀹归噺', '褰撳墠宸插崰鐢ㄦ按浣?鎵€鏈変骇鍝?', '鑸绔炰环(褰卞瓙浠锋牸)'], top: 25 },
+                xAxis: [{ type: 'category', data: categories, axisPointer: { type: 'shadow' } }],
+                yAxis: [
+                    { type: 'value', name: '搴т綅/浜烘暟', min: 0 },
+                    { type: 'value', name: '褰卞瓙浠锋牸 (楼)', min: 0, position: 'right', axisLine: { show: true } }
+                ],
+                series: [
+                    {
+                        name: '鐗╃悊搴т綅瀹归噺', type: 'bar',
+                        itemStyle: { color: 'rgba(189, 195, 199, 0.4)' },
+                        barWidth: '40%', barGap: '-100%',
+                        data: capacityData
+                    },
+                    {
+                        name: '褰撳墠宸插崰鐢ㄦ按浣?鎵€鏈変骇鍝?', type: 'bar',
+                        itemStyle: { color: '#3498db' },
+                        barWidth: '40%',
+                        data: passengerData,
+                        label: { show: true, position: 'inside', formatter: '{c} 浜? }
+                    },
+                    {
+                        name: '鑸绔炰环(褰卞瓙浠锋牸)', type: 'line', yAxisIndex: 1,
+                        itemStyle: { color: '#e67e22' },
+                        symbolSize: 10,
+                        data: shadowPriceData,
+                        label: { show: true, position: 'top', formatter: '楼{c}' }
+                    }
+                ]
+            };
+            drilldownChart.setOption(option);
+        }
+
+        // 鍚姩搴旂敤
+        window.onload = initDashboard;
+
+    </script>
+</body>
+</html>

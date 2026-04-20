@@ -1,0 +1,3 @@
+﻿model_name,target,train_rows,r2,mae,log_target
+near_ratio_model,near_ratio,17854,0.3717298925157563,0.2557640342457548,False
+final_demand_model,final_demand,20053,0.3486787512810188,2.9726862156892313,True

@@ -1,0 +1,10 @@
+﻿feature,description,mdi_importance,permutation_importance,rank_score,model_name,target
+n_stops,中转次数,0.6050328669240904,0.8724826297959687,1.0,final_demand_model,final_demand
+relative_fare,相对票价,0.10050964612691324,0.13248664495028398,2.0,final_demand_model,final_demand
+class_rank,票价等级序号,0.0896641064206161,0.10702681820328204,3.0,final_demand_model,final_demand
+host_share,主航司市场份额,0.0665005397423143,0.07672159807868863,4.0,final_demand_model,final_demand
+duration_min,飞行时长(分钟),0.06513875992276093,0.07312382325600073,5.0,final_demand_model,final_demand
+od_n_products,OD产品数,0.043961887266009046,0.042136340243607205,6.0,final_demand_model,final_demand
+is_BA,是否为BA航班,0.017299300517901156,0.04108369228323357,7.0,final_demand_model,final_demand
+dep_period,起飞时段,0.0065490030887420635,0.007391703057626642,8.0,final_demand_model,final_demand
+arr_period,到达时段,0.005343889990652844,0.0054362146074724005,9.0,final_demand_model,final_demand
