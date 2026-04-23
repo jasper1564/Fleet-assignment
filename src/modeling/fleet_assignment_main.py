@@ -10,7 +10,10 @@ ROOT = next(path for path in Path(__file__).resolve().parents if (path / '.git')
 DEMAND_INPUT_DIR = ROOT / 'data' / 'model_input' / 'demand'
 NETWORK_INPUT_DIR = ROOT / 'data' / 'model_input' / 'network'
 REFERENCE_INPUT_DIR = ROOT / 'data' / 'raw' / 'reference'
-RESULTS_DIR = ROOT / 'results' / 'runs' / 'model_current'
+_results_dir_override = os.getenv("RESULTS_DIR")
+RESULTS_DIR = Path(_results_dir_override) if _results_dir_override else ROOT / 'results' / 'runs' / 'model_current'
+if not RESULTS_DIR.is_absolute():
+    RESULTS_DIR = ROOT / RESULTS_DIR
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 TURNAROUND_MIN = 40
 POSITIVE_SHADOW_EPS = 1e-6
@@ -439,7 +442,7 @@ def build_and_solve_fap_model(
 # =====================================================================
 if __name__ == "__main__":
     # 鈹€鈹€ 钂欑壒鍗℃礇鍙傛暟閰嶇疆锛堝彲鎸夐渶璋冩暣锛夆攢鈹€
-    MC_N_SCENARIOS = int(os.getenv("MC_N_SCENARIOS", "5"))
+    MC_N_SCENARIOS = int(os.getenv("MC_N_SCENARIOS", "20"))
     MC_CV          = float(os.getenv("MC_CV", "0.20"))
     MC_DIST        = os.getenv("MC_DIST", "negbinom")
     MC_SEED        = int(os.getenv("MC_SEED", "42"))

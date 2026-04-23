@@ -1,2 +1,2 @@
 ﻿Experiment_Name,Scenario_Count,Demand_CV,Demand_Distribution,Random_Seed,Turnaround_Min,Fleet_Adjustment,Total_Revenue,Total_Cost,Total_Profit,Total_Unmet_Demand,Average_Load_Factor(%),Weighted_Load_Factor(%),High_Shadow_Price_Leg_Count
-model_current,5,0.2,negbinom,42,40,Baseline,11891210.82,6426543.33,5464667.49,13686.6,86.0,87.48,549
+model_current,20,0.2,negbinom,42,40,Baseline,11902969.36,6455770.83,5447198.52,13539.85,85.83,87.49,602

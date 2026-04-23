@@ -1,63 +1,77 @@
 # Modeling Module
 
-这个目录是题目第 3 问和第 4 问的核心区域。
+最后更新：2026-04-23
 
-优先看的单文件说明：
+这个目录是题目第 3 问和第 4 问的核心代码区域。
 
-- [`fleet_assignment_main.md`](fleet_assignment_main.md)
-- [`fleet_assignment_robust.md`](fleet_assignment_robust.md)
+## 当前正式口径
 
-## 当前推荐阅读顺序
+- 正式主模型：[`fleet_assignment_main.py`](fleet_assignment_main.py)
+- 对照模型：[`fleet_assignment_robust.py`](fleet_assignment_robust.py)
+- 正式结果目录：[`../../results/runs/model_current`](../../results/runs/model_current)（20 场景）
+- 原 5 场景归档目录：[`../../results/runs/model_current_5scenario_archive_2026-04-23`](../../results/runs/model_current_5scenario_archive_2026-04-23)
+- 对照结果目录：[`../../results/runs/robustness`](../../results/runs/robustness)
 
-1. [`fleet_assignment_main.py`](fleet_assignment_main.py)
-2. [`fleet_assignment_robust.py`](fleet_assignment_robust.py)
-3. [`variants/README.md`](variants/README.md)
+## 推荐阅读顺序
+
+1. [`fleet_assignment_main.md`](fleet_assignment_main.md)
+2. [`../../docs/final_model_spec.md`](../../docs/final_model_spec.md)
+3. [`fleet_assignment_robust.md`](fleet_assignment_robust.md)
+4. [`variants/README.md`](variants/README.md)
 
 ## 活跃模型
 
-| 文件 | 当前定位 | 需求输入 | 主要结果目录 |
+| 文件 | 当前定位 | 需求输入 | 结果目录 |
 | --- | --- | --- | --- |
-| [`fleet_assignment_main.py`](fleet_assignment_main.py) | 当前正式答题主模型入口 | `data/model_input/demand/product_info_rf_predicted.json` | `results/runs/model_current/` |
-| [`fleet_assignment_robust.py`](fleet_assignment_robust.py) | 当前稳健性/对照模型入口 | `data/model_input/demand/product_info_em_restored.json` | `results/runs/robustness/` |
+| [`fleet_assignment_main.py`](fleet_assignment_main.py) | 问题三正式主模型入口，默认 20 场景 | `product_info_rf_predicted.json` | `results/runs/model_current/` |
+| [`fleet_assignment_main.py`](fleet_assignment_main.py) + 自定义 `RESULTS_DIR` | Monte Carlo 对照实验 | `product_info_rf_predicted.json` | 自定义 `results/runs/...` |
+| [`fleet_assignment_robust.py`](fleet_assignment_robust.py) | 稳健性/对照模型 | `product_info_em_restored.json` | `results/runs/robustness/` |
 
-## 共同数据依赖
-
-两个模型都依赖：
+## 共同依赖
 
 - `data/model_input/network/super_flight_schedule.json`
 - `data/model_input/network/airport_timeline.json`
 - `data/model_input/network/leg_to_products.json`
 - `data/raw/reference/fleet_family_master.csv`
 
-## 当前模型层的重要事实
+## 当前项目里的关键判断
 
-### `fleet_assignment_main.py`
+### 1. 主模型已经足够支撑问题三与问题四
 
-- 当前最接近“继续开发与最终答题基线”的文件。
-- 读取 RF 修正后的产品需求。
-- 包含 Monte Carlo 需求场景生成逻辑。
-- 当前正式口径中，Monte Carlo 只保留为轻量波动刻画，默认场景数固定为 `5`。
-- 可以输出综合分析、地面状态、影子价格、航段负载率和若干摘要表。
+当前 `model_current` 已稳定输出：
 
-### `fleet_assignment_robust.py`
+- `scenario_summary.csv`
+- `fleet_summary.csv`
+- `task_summary.csv`
+- `leg_value_analysis.csv`
+- `product_assignment_analysis.csv`
+- `task_adjustment_candidates.csv`
+- `leg_adjustment_candidates.csv`
 
-- 更偏向“替代需求口径下的稳健性比较”。
-- 读取 EM 还原需求。
-- EM 还原结果本身较稳健，且结果和影子价格能跑出来。
-- 但这条线不符合题目要求的需求还原逻辑，因此不应直接替代主模型成为正式答案。
+20 场景已提升为正式主线，统一说明见：
 
-## 开发时要小心的地方
+- [`../../docs/monte_carlo_20_scenario_handoff.md`](../../docs/monte_carlo_20_scenario_handoff.md)
 
-- 改需求输入文件名，等于在改模型结论。
-- 改 `network` JSON，等于在改任务结构与飞机流网络。
-- 当前 `Monte Carlo` 不可直接默认可用，因为存在 OOM 问题。
-- `results/runs/` 中的现有结果不一定是当前文件最近一次运行所得。
+### 2. 闲置机型不自动等于求解失败
 
-## 当前最关键的开发判断
+当前若干机型 `0` 使用，更合理的解释通常是：
 
-如果目标是继续推进最终答题主线，当前默认判断应是：
+- 模型只限制“使用量不超过可用量”
+- 目标函数是“收入 - 飞行成本”
+- 这些机型在当前网络中的综合性价比较低
 
-- 主结论以 `fleet_assignment_main.py` 为核心
-- `fleet_assignment_robust.py` 作为稳健性/对照补充
-- `Monte Carlo` 只保留少量场景，用作轻量波动刻画
-- 接下来主要开发重点转向输出端，尤其是第四问所需输出
+对应说明见：
+
+- [`../../docs/question4_additional_findings.md`](../../docs/question4_additional_findings.md)
+
+### 3. 改需求输入就等于改答题口径
+
+`product_info_rf_predicted.json` 与 `product_info_em_restored.json` 不是“可随手替换的数据文件”，而是两套不同的实验口径。
+
+## 当前最稳的使用方式
+
+- 问题三与问题四的正式结论，以 `fleet_assignment_main.py` 为准
+- 默认正式结果以 `results/runs/model_current` 的 20 场景结果为准
+- 原 5 场景结果只作为归档对照，不直接替换正式结果
+- `fleet_assignment_robust.py` 只作为对照和稳健性补充
+- 若继续扩展，优先补充解释端和报告端，而不是重写优化结构

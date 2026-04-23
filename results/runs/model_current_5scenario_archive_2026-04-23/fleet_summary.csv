@@ -1,0 +1,10 @@
+﻿Fleet,Fleet_Type,Available_Aircraft,Used_Aircraft,Utilization_Rate(%),Assigned_Task_Count,Assigned_Leg_Count,Total_Fly_Minutes,Total_Flight_Hours,Average_Flight_Minutes_Per_Aircraft,Average_Task_Load(%),Weighted_Load(%),Expected_Passengers,Average_Revenue_Per_Task,Attributed_Revenue,Operating_Cost,Attributed_Profit,Average_Shadow_Price_On_Assigned_Legs,Positive_Shadow_Leg_Count,Bottleneck_Leg_Count,Tasks_Per_Available_Aircraft,End_Of_Day_Grounded,Grounded_Ratio(%),Overnight_Airborne_Count,Profit_Per_Available_Aircraft,Utilization_Tag
+F8C12Y126,F8C12Y126,39,0.0,0.0,0,0,0,0.0,0.0,0.0,0.0,0,0.0,0,0,0,0.0,0,0,0.0,39.0,100.0,0,0.0,Underused
+F12C0Y132,F12C0Y132,8,0.0,0.0,0,0,0,0.0,0.0,0.0,0.0,0,0.0,0,0,0,0.0,0,0,0.0,8.0,100.0,0,0.0,Underused
+F8C12Y99,F8C12Y99,9,0.0,0.0,0,0,0,0.0,0.0,0.0,0.0,0,0.0,0,0,0,0.0,0,0,0.0,9.0,100.0,0,0.0,Underused
+F12C12Y48,F12C12Y48,11,11.0,100.0,59,79,6067,101.12,551.55,76.33,69.9,2650.6,7192.69,424368.57,192930.6,231437.97,4.7536,36,39,5.36,10.0,90.91,1,21039.82,Tight
+F0C0Y72,F0C0Y72,4,4.0,100.0,20,20,1280,21.33,320.0,79.57,79.57,1145.8,5751.8,115036.05,50986.65,64049.42,1.368,12,12,5.0,4.0,100.0,0,16012.35,Tight
+F0C0Y76,F0C0Y76,38,38.0,100.0,342,382,41106,685.1,1081.74,88.86,86.82,25206.8,9721.8,3324854.6,1637388.96,1687465.61,10.4761,258,262,9.0,32.0,84.21,6,44406.99,Tight
+F12C0Y112,F12C0Y112,10,1.0,10.0,2,2,79,1.32,79.0,90.0,90.0,201.6,7264.0,14528.0,5977.67,8550.33,0.96,1,1,0.2,10.0,100.0,0,855.03,Tight
+F12C30Y117,F12C30Y117,44,0.0,0.0,0,0,0,0.0,0.0,0.0,0.0,0,0.0,0,0,0,0.0,0,0,0.0,44.0,100.0,0,0.0,Underused
+F16C0Y165,F16C0Y165,48,44.0,91.67,316,332,59182,986.37,1345.05,89.86,89.23,48882.4,23909.27,7555330.17,4539259.4,3016070.77,14.0344,242,245,6.58,39.0,81.25,9,62834.81,Tight

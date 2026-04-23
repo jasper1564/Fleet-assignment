@@ -1,0 +1,6 @@
+﻿Task,Assigned_Fleet,Origin,Destination,Leg_Count,Expected_Load(%),Revenue,Cost,Profit,Shadow_Price_Summary,Product_Count,Recommendation_Tag,Recommendation_Reason
+AA0138,F0C0Y76,BOD,PSE,1,9.34,1069.97,14738.33,-13668.36,avg=0.00; max=0.00; positive_legs=0,13,Review_Schedule,"Low load, weak scarcity signal, and limited commercial support suggest a schedule review."
+BA2631,F16C0Y165,TFB,QEY,1,17.06,2839.0,3911.7,-1072.7,avg=0.00; max=0.00; positive_legs=0,11,Review_Schedule,"Low load, weak scarcity signal, and limited commercial support suggest a schedule review."
+AA0082,F16C0Y165,BOD,TFB,1,49.67,14895.45,15646.8,-751.35,avg=0.00; max=0.00; positive_legs=0,60,Review_Schedule,"Low load, weak scarcity signal, and limited commercial support suggest a schedule review."
+BA2484,F12C12Y48,TFB,CMJ,1,21.46,981.6,1335.6,-354.0,avg=0.00; max=0.00; positive_legs=0,34,Review_Schedule,"Low load, weak scarcity signal, and limited commercial support suggest a schedule review."
+BA2111,F0C0Y76,QTD,TFB,1,27.43,2026.6,2031.5,-4.9,avg=0.00; max=0.00; positive_legs=0,15,Review_Schedule,"Low load, weak scarcity signal, and limited commercial support suggest a schedule review."

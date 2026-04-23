@@ -1,0 +1,11 @@
+﻿Task,Assigned_Fleet,Origin,Destination,Leg_Count,Expected_Load(%),Revenue,Cost,Profit,Shadow_Price_Summary,Product_Count,Recommendation_Tag,Recommendation_Reason
+AA0123,F16C0Y165,TFB,GBJ,1,100.0,54475.6,17180.8,37294.8,avg=13.58; max=13.58; positive_legs=1,128,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0004,F16C0Y165,TFB,EDB,1,100.0,55498.55,23010.0,32488.55,avg=13.10; max=13.10; positive_legs=1,39,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0129,F16C0Y165,TFB,GBJ,1,100.0,43101.82,17410.9,25690.92,avg=9.34; max=9.34; positive_legs=1,140,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0087,F16C0Y165,TFB,BOD,1,100.0,40979.63,15493.4,25486.23,avg=11.00; max=11.00; positive_legs=1,256,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0083,F16C0Y165,TFB,BOD,1,100.0,40984.32,16107.0,24877.32,avg=10.89; max=10.89; positive_legs=1,98,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0097,F16C0Y165,TFB,BOD,1,100.0,39720.4,16030.3,23690.1,avg=8.79; max=8.79; positive_legs=1,295,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0089,F16C0Y165,TFB,BOD,1,100.0,39558.49,16107.0,23451.49,avg=8.02; max=8.02; positive_legs=1,210,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+AA0099,F16C0Y165,TFB,BOD,1,100.0,39072.11,15876.9,23195.21,avg=8.83; max=8.83; positive_legs=1,184,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+super_AA0317,F16C0Y165,TGP,TGP,2,97.27,37895.76,16107.0,21788.76,avg=3.00; max=4.45; positive_legs=2,65,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.
+super_AA0225,F16C0Y165,TKE,QEY,2,91.29,43744.63,22396.4,21348.23,avg=1.85; max=3.60; positive_legs=2,50,Upgauge_or_AddCapacity,High load and positive shadow-price signal suggest scarce capacity on this task.

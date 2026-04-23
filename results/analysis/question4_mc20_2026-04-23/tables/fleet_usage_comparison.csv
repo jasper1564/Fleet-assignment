@@ -1,0 +1,10 @@
+﻿Fleet,Used_Aircraft_5sc,Assigned_Task_Count_5sc,Weighted_Load(%)_5sc,Attributed_Profit_5sc,Utilization_Tag_5sc,Used_Aircraft_20sc,Assigned_Task_Count_20sc,Weighted_Load(%)_20sc,Attributed_Profit_20sc,Utilization_Tag_20sc,Used_Aircraft_Delta,Assigned_Task_Delta,Profit_Delta
+F8C12Y126,0.0,0,0.0,0.0,Underused,0.0,0,0.0,0.0,Underused,0.0,0,0.0
+F12C0Y132,0.0,0,0.0,0.0,Underused,0.0,0,0.0,0.0,Underused,0.0,0,0.0
+F8C12Y99,0.0,0,0.0,0.0,Underused,0.0,0,0.0,0.0,Underused,0.0,0,0.0
+F12C12Y48,11.0,59,69.9,231437.97,Tight,11.0,58,69.94,227077.91,Tight,0.0,-1,-4360.06
+F0C0Y72,4.0,20,79.57,64049.42,Tight,4.0,15,72.45,60060.24,Tight,0.0,-5,-3989.18
+F0C0Y76,38.0,342,86.82,1687465.61,Tight,38.0,349,86.33,1693450.62,Tight,0.0,7,5985.01
+F12C0Y112,1.0,2,90.0,8550.33,Tight,0.0,0,0.0,0.0,Underused,-1.0,-2,-8550.33
+F12C30Y117,0.0,0,0.0,0.0,Underused,0.0,0,0.0,0.0,Underused,0.0,0,0.0
+F16C0Y165,44.0,316,89.23,3016070.77,Tight,42.0,317,89.62,3008368.0,Tight,-2.0,1,-7702.77

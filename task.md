@@ -1,99 +1,135 @@
-# Task Backlog
+# Task Status
 
-最后更新：2026-04-20
+最后更新：2026-04-23
 
-这个文件只放“下一步该做什么”，不承担项目介绍职能。
+这个文件现在不再是“待办清单”，而是整个仓库当前完成状态的集中说明。
 
-## P0：统一最终答题口径
+## 当前总体状态
 
-- 以 `RF + main model` 作为默认答题主线，不再把 `EM + robust model` 视为同等地位的最终方案。
-- 将 `EM + robust model` 定位为对照、稳健性补充或 sanity check，而不是题目主答案。
-- 明确 `results/runs/` 下哪些目录作为最终报告证据，哪些只是历史实验。
-- 明确“并购前后收益比较”使用的基准结果目录。
+题目中的四个核心问题都已经完成主线作答，仓库当前处于：
 
-## 按题目要求拆分的任务
+> 主线结果已完成，文档与输出已收口，后续工作以补充说明和可选扩展为主。
+
+## 四个问题的完成情况
 
 ### 题目要求 1：并购前后收益比较
 
-- 明确“并购前”与“并购后”的可比结果口径。
-- 整理统一的收益、成本、利润对照表。
-- 检查历史结果目录里的字段是否足够直接支撑报告表格。
+完成情况：已完成
+
+当前口径：
+
+- 主口径：原始历史销量口径
+- 对照口径：RF 还原需求口径
+
+已完成内容：
+
+- `A_Only / B_Only / Joint_Venture_AB` 产品分类与收益拆分
+- 并购前后票务收入比较
+- 新增收入来源拆解
+- 原始口径与 RF 对照口径并列表
+
+对应输出：
+
+- [`docs/question1_answer.md`](docs/question1_answer.md)
+- [`results/runs/question1_current`](results/runs/question1_current)
+- [`results/runs/question1_current/rf_restored`](results/runs/question1_current/rf_restored)
+- [`results/figures/question1`](results/figures/question1)
 
 ### 题目要求 2：旅客行程选择行为分析
 
-- 以随机森林分支作为第 2 问的正式实现路线，因为题目要求“通过影响因素分析来还原需求”。
-- 输出不仅要有修正后的需求值，还要有可解释结论、特征权重和图形。
-- 截断恢复继续作为当前 RF 主线的一部分。
-- 当前 RF 主线已经完成：
-  - 规则式截断识别
-  - 仅用未截断样本训练 `near_ratio`
-  - 对截断产品恢复 `final_demand`
-  - 基于 `final_demand` 再做需求模型解释
+完成情况：已完成
+
+当前口径：
+
+- 正式路线：`Random Forest`
+- 对照路线：`EM`
+
+已完成内容：
+
+- 基于 RD 结构的规则式截断识别
+- 仅用未截断样本训练 `near_ratio` 行为模型
+- 对截断产品恢复 `final_demand`
+- 基于 `final_demand` 回答“特征如何影响总需求”
+- 下游 JSON 同步到正式主模型输入
+
+对应输出：
+
+- [`src/demand_estimation/passenger_choice_random_forest.md`](src/demand_estimation/passenger_choice_random_forest.md)
+- [`data/interim/passenger_choice`](data/interim/passenger_choice)
+- [`data/model_input/demand/product_info_rf_predicted.json`](data/model_input/demand/product_info_rf_predicted.json)
 
 ### 题目要求 3：并购后机型分配方案
 
-- 以 `src/modeling/fleet_assignment_main.py` 作为默认答题模型入口。
-- 固定 `product_info_rf_predicted.json` 为默认答题需求口径。
-- 固定轻量 `Monte Carlo` 场景数为 `5`，不再继续扩展高场景数。
-- 统一输出目录与输出字段，确保可直接写入报告。
+完成情况：已完成
 
-### 题目要求 3A：需求波动模拟
+当前口径：
 
-- 将 `Monte Carlo` 定位为轻量波动刻画，而不是主要技术卖点。
-- 默认场景数锁定为 `5`。
-- 不再继续追求 `30+` 场景的大规模随机规划。
+- 正式主模型：[`src/modeling/fleet_assignment_main.py`](src/modeling/fleet_assignment_main.py)
+- 正式结果目录：[`results/runs/model_current`](results/runs/model_current)（当前为 20 场景）
+- 原 5 场景归档：[`results/runs/model_current_5scenario_archive_2026-04-23`](results/runs/model_current_5scenario_archive_2026-04-23)
+
+已完成内容：
+
+- 固定 RF 恢复后的需求输入
+- 求解并购后机型分配方案
+- 输出收益、成本、利润、未满足需求、载客率与结构化分析表
+- 将 20 场景 Monte Carlo 作为正式主线，原 5 场景保留为归档对照
+
+对应输出：
+
+- [`docs/final_model_spec.md`](docs/final_model_spec.md)
+- [`docs/monte_carlo_20_scenario_handoff.md`](docs/monte_carlo_20_scenario_handoff.md)
+- [`src/modeling/fleet_assignment_main.md`](src/modeling/fleet_assignment_main.md)
+- [`results/runs/model_current`](results/runs/model_current)
+- [`results/runs/model_mc20_2026-04-23`](results/runs/model_mc20_2026-04-23)
+- [`results/runs/model_current_5scenario_archive_2026-04-23`](results/runs/model_current_5scenario_archive_2026-04-23)
 
 ### 题目要求 4：机队使用情况与调整建议
 
-- 按“现状描述 -> 诊断 -> 候选 -> 建议”组织第 4 问。
-- 基于模型输出整理机型使用率、地面停放、航段价值、瓶颈频率等指标。
-- 明确哪些指标已经由模型直接输出，哪些还需要新增汇总输出。
-- 将“进一步调整建议”与模型结果绑定，避免只给经验判断。
-- 以 `docs/question4_output_plan.md` 作为后续输出端开发规格。
+完成情况：已完成
 
-## 工程化支持任务
+当前口径：
 
-- 补一个能够解释 `data/model_input/network/*.json` 来源的说明，或者恢复其生成链路。
-- 清理核心脚本中的历史编码问题，优先处理 `src/modeling/`。
-- 统一关键脚本的输出字段命名，避免不同结果目录之间难以横向比较。
-- 视情况增加轻量级校验脚本，至少检查关键输入文件是否齐全。
-- 分析 `Monte Carlo` 方案 OOM 的直接原因，是场景数、变量规模、结果缓存方式还是导出逻辑导致。
+- 不再重新建模
+- 基于问题三结果做机队使用解释、瓶颈识别与调整建议
+- 基于 20 场景主线结果做正式解释与调整建议
 
-## 新发现：RF 数据问题不只来自截断
+已完成内容：
 
-- 当前原始产品总数为 `47,190`，其中正销量产品 `20,053`，零销量产品 `27,137`。
-- 零销量产品占比达到 `57.51%`，说明当前需求问题不只是在正销量样本内部存在截断。
-- 但现阶段不能把零销量产品直接等同于“缺失需求”。
-- 数据分布显示零销量具有明显结构性，而不是均匀噪声：
-  - `n_stops = 0` 的零销量占比仅 `17.63%`
-  - `n_stops = 1` 的零销量占比 `67.74%`
-  - `n_stops = 2` 的零销量占比 `78.91%`
-- 因此，大量零销量产品更可能是长尾、弱连接或弱可售产品，而不一定是被截断或被漏记。
+- 机型使用画像
+- 航班与航段价值评估
+- 调整候选任务与航段识别
+- 机型性价比与闲置解释
+- 一套可直接用于报告的图形与配套文字
+- 基于 20 场景结果生成第四问分析包
 
-## 暂缓项：零需求恢复路径
+对应输出：
 
-- 已确认这是一个值得研究的新方向，但当前不纳入 RF 主线。
-- 原因是现有 `final_demand` 回归模型只在正销量样本上训练，不能区分“真零需求”和“假零需求”。
-- 如果直接用当前 `pred_final_demand` 补全部零销量产品，会额外增加约 `19,997.39` 的需求量。
-- 这会把当前 RF 恢复后的总需求从 `84,974.02` 推高到约 `104,971.41`，增幅过大，暂不适合直接写入主模型输入。
-- 当前项目决策是：
-  - 保留现有“截断恢复”主线
-  - 不开启“全部零销量产品回归补值”
-  - 将零需求恢复单独保留为未来分支
+- [`docs/question4_answer.md`](docs/question4_answer.md)
+- [`docs/question4_current_analysis.md`](docs/question4_current_analysis.md)
+- [`docs/question4_figure_notes.md`](docs/question4_figure_notes.md)
+- [`docs/question4_additional_findings.md`](docs/question4_additional_findings.md)
+- [`results/figures/question4`](results/figures/question4)
+- [`results/analysis/question4_mc20_2026-04-23`](results/analysis/question4_mc20_2026-04-23)
 
-## 后续保留思路
+## 当前正式主线
 
-- 后续如有时间，单独开发“零需求恢复”分支，而不是直接修改当前截断恢复主线。
-- 推荐开发顺序：
-  1. 先筛选“可能是假零”的产品，而不是对全部零销量产品补值。
-  2. 设计额外识别条件，例如直飞优先、市场位置、同航班相邻舱位销售情况、预测值阈值等。
-  3. 只对高置信候选做回归恢复。
-  4. 单独做敏感性分析，再决定是否并入 `product_info_rf_predicted.json` 主线。
+- 问题一：原始历史销量为主，RF 对照为辅
+- 问题二：RF 两阶段需求恢复主线
+- 问题三：`fleet_assignment_main.py`
+- 问题四：基于问题三结果的管理解释模块
 
-## 当前建议的接手顺序
+## 当前不再视为主线的内容
 
-1. 先读题目要求。
-2. 再确认 `RF + main model` 是正式答题主线。
-3. 然后把 `EM + robust model` 放到对照与稳健性位置。
-4. 再单独处理 `Monte Carlo` 的 OOM 问题。
-5. 最后补结果汇总和报告支撑材料。
+- `EM + robust model`：稳健性/对照补充
+- Monte Carlo：正式结果默认 `20` 场景，原 `5` 场景仅作为归档对照；仍不把大规模 Monte Carlo 作为主要技术卖点
+- 全量零需求恢复：暂不并入主线
+
+## 仍可继续扩展的方向
+
+这些内容当前都属于“可选扩展”，不是主线缺口：
+
+1. 为问题一补充利润比较口径
+2. 为问题二单独研究“零需求恢复”
+3. 为问题三恢复 `network` JSON 的端到端生成链路
+4. 为问题四继续压缩成更适合直接交作业的终稿

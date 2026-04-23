@@ -1,0 +1,2 @@
+﻿Experiment_Name,Scenario_Count,Demand_CV,Demand_Distribution,Random_Seed,Turnaround_Min,Fleet_Adjustment,Total_Revenue,Total_Cost,Total_Profit,Total_Unmet_Demand,Average_Load_Factor(%),Weighted_Load_Factor(%),High_Shadow_Price_Leg_Count
+model_mc20_2026-04-23,20,0.2,negbinom,42,40,Baseline,11902969.36,6455770.83,5447198.52,13539.85,85.83,87.49,602

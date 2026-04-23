@@ -1,153 +1,173 @@
 # Repo Handoff
 
-最后更新：2026-04-20
+最后更新：2026-04-23
 
 ## 这是什么
 
-这个仓库的核心目标不是做一个通用的运筹优化框架，而是完成 [`docs/problem_statement/fleet_assignment_problem_statement.docx`](docs/problem_statement/fleet_assignment_problem_statement.docx) 对应的大作业题目：
+这个仓库用于完成课程设计题目 [`docs/problem_statement/fleet_assignment_problem_statement.docx`](docs/problem_statement/fleet_assignment_problem_statement.docx) 对应的四个问题：
 
-- 并购前后收益比较
-- 旅客行程选择行为分析
-- 并购后机型分配方案设计
-- 机队使用情况分析与调整建议
+1. 并购前后收益比较
+2. 旅客行程选择行为分析
+3. 并购后机型分配方案设计
+4. 机队使用情况分析与调整建议
 
-把这个仓库看成“为完成题目而搭建的分析与建模代码库”会更准确。
+当前主线工作已经完成，仓库现在更适合被理解成：
+
+> 一套围绕题目四个问题整理好的数据、建模、结果解释与答题文档仓库。
 
 ## 先看什么
 
-接手这个项目时，推荐按下面顺序获取上下文：
+如果是第一次接手这个仓库，推荐按下面顺序获取上下文：
 
 1. [`docs/problem_statement/README.md`](docs/problem_statement/README.md)
-2. [`src/modeling/README.md`](src/modeling/README.md)
-3. [`src/demand_estimation/README.md`](src/demand_estimation/README.md)
-4. [`task.md`](task.md)
+2. [`docs/repo_taskbook.md`](docs/repo_taskbook.md)
+3. [`docs/final_model_spec.md`](docs/final_model_spec.md)
+4. [`docs/monte_carlo_20_scenario_handoff.md`](docs/monte_carlo_20_scenario_handoff.md)
+5. [`task.md`](task.md)
 
-如果只想最快把握现状，前 3 个文件已经足够。
+如果只想快速查看最终答题材料，优先看：
 
-## 当前结论
+1. [`docs/question1_answer.md`](docs/question1_answer.md)
+2. [`src/demand_estimation/passenger_choice_random_forest.md`](src/demand_estimation/passenger_choice_random_forest.md)
+3. [`results/runs/model_current`](results/runs/model_current)
+4. [`docs/question4_answer.md`](docs/question4_answer.md)
+5. [`docs/question4_figure_notes.md`](docs/question4_figure_notes.md)
 
-- 仓库结构重构已完成，主目录稳定为 `data / src / results / docs / archive`。
-- `src/` 下当前主流程脚本已经改到新路径，且做过语法检查。
-- 当前需求处理存在两条路线，但地位并不对等：
-  - `RF` 路线：基于题目第 2 问的影响因素分析来还原需求，属于当前答题主线。
-  - `EM` 路线：还原结果更稳健，且结果和影子价格都能跑出来，但不符合题目“通过第二问分析来还原需求”的要求，因此更适合作为对照或稳健性参考。
-- 当前正式答题模型仍是 `RF + fleet_assignment_main.py`，并将 `Monte Carlo` 固定为轻量 `5` 场景波动刻画。
-- 高场景数 `Monte Carlo` 的边际价值被认为较低，因此不再作为主线追求方向。
-- `archive/` 是历史资产区，不是当前开发入口。
+## 当前正式口径
 
-## 当前主线结构
+### 总体答题口径
 
-### 题目来源
+- 问题一：以原始历史销量口径回答并购前后票务收入变化，同时保留 RF 还原需求口径作为对照。
+- 问题二：以 `Random Forest` 两阶段需求恢复框架为正式路线。
+- 问题三：以 [`src/modeling/fleet_assignment_main.py`](src/modeling/fleet_assignment_main.py) 为正式机型分配主模型。
+- 问题四：不再重新建模，而是基于问题三结果做管理解释与调整建议。
 
-- 题目正文与要求：[`docs/problem_statement/fleet_assignment_problem_statement.docx`](docs/problem_statement/fleet_assignment_problem_statement.docx)
-- 开发者摘要：[`docs/problem_statement/README.md`](docs/problem_statement/README.md)
+### 当前正式技术主线
 
-### 数据主线
+- 正式需求输入：[`data/model_input/demand/product_info_rf_predicted.json`](data/model_input/demand/product_info_rf_predicted.json)
+- 正式主模型：[`src/modeling/fleet_assignment_main.py`](src/modeling/fleet_assignment_main.py)
+- 正式主结果：[`results/runs/model_current`](results/runs/model_current)（当前为 20 场景）
+- `EM + robust model`：保留为对照/稳健性补充，不作为主答案
+- `Monte Carlo`：正式主线使用 `20` 个需求场景，原 `5` 场景结果保留为归档对照
+- 20 场景主线交接：[`docs/monte_carlo_20_scenario_handoff.md`](docs/monte_carlo_20_scenario_handoff.md)
+
+## 四个问题的最终交付件
+
+### 问题一：并购前后收益比较
+
+- 正式答案：[`docs/question1_answer.md`](docs/question1_answer.md)
+- 原始历史销量结果：[`results/runs/question1_current`](results/runs/question1_current)
+- RF 对照结果：[`results/runs/question1_current/rf_restored`](results/runs/question1_current/rf_restored)
+- 图形输出：[`results/figures/question1`](results/figures/question1)
+
+当前结论摘要：
+
+- 原始历史销量口径下，并购前票务收入约 `9.88M`，并购后约 `13.01M`，新增约 `3.13M`，增幅 `31.63%`
+- RF 还原需求口径下，新增收入约 `3.32M`，增幅 `32.13%`
+- 结论稳定：并购收益增长主要来自 B 网络接入与联程协同双重作用
+
+### 问题二：旅客行程选择行为分析
+
+- 模块说明：[`src/demand_estimation/README.md`](src/demand_estimation/README.md)
+- 核心说明：[`src/demand_estimation/passenger_choice_random_forest.md`](src/demand_estimation/passenger_choice_random_forest.md)
+- 中间结果：[`data/interim/passenger_choice`](data/interim/passenger_choice)
+- 图形输出：[`results/figures/passenger_choice`](results/figures/passenger_choice)
+
+当前结论摘要：
+
+- 已完成“截断识别 -> 行为模型 -> 需求恢复 -> 总需求解释”的两阶段 RF 框架
+- 当前恢复后的 `final_demand` 总量为 `84,974.02`
+- 需求问题不只来自截断，也来自大规模零销量产品，但“零需求恢复”尚未并入主线
+
+### 问题三：并购后机型分配方案
+
+- 模型说明：[`src/modeling/README.md`](src/modeling/README.md)
+- 主模型说明：[`src/modeling/fleet_assignment_main.md`](src/modeling/fleet_assignment_main.md)
+- 最终模型口径：[`docs/final_model_spec.md`](docs/final_model_spec.md)
+- 正式结果目录：[`results/runs/model_current`](results/runs/model_current)（20 场景）
+- 原 5 场景归档：[`results/runs/model_current_5scenario_archive_2026-04-23`](results/runs/model_current_5scenario_archive_2026-04-23)
+
+当前结论摘要：
+
+- 当前主模型结果总收入 `11,902,969.36`
+- 总成本 `6,455,770.83`
+- 总利润 `5,447,198.52`
+- 总未满足需求 `13,539.85`
+- 加权载客率 `87.49%`
+- 与原 5 场景归档结果相比，总利润变化约 `-0.32%`
+
+### 问题四：机队使用情况与调整建议
+
+- 正式答案：[`docs/question4_answer.md`](docs/question4_answer.md)
+- 现状分析：[`docs/question4_current_analysis.md`](docs/question4_current_analysis.md)
+- 图示说明：[`docs/question4_figure_notes.md`](docs/question4_figure_notes.md)
+- 补充发现：[`docs/question4_additional_findings.md`](docs/question4_additional_findings.md)
+- 图形输出：[`results/figures/question4`](results/figures/question4)（20 场景）
+- 20 场景分析包：[`results/analysis/question4_mc20_2026-04-23`](results/analysis/question4_mc20_2026-04-23)
+
+当前结论摘要：
+
+- 当前网络不是“总机队数量不够”，而是“少数主力机型偏紧、部分机型明显闲置”
+- `F16C0Y165` 和 `F0C0Y76` 是核心主力机型
+- 若干 `0` 使用机型更像性价比筛选结果，而不是求解失败
+- 当前 20 场景主线相比原 5 场景只带来少量边际机型重排
+
+## 当前最重要的项目判断
+
+### 1. 题目要求优先于单个脚本
+
+仓库中保留了历史版本和对照版本，但什么算正式答案，应当由题目四个问题决定，而不是由某个版本号决定。
+
+### 2. 问题一与问题三不能混口径
+
+问题一回答的是“历史收益比较”，不能直接拿问题三的优化后结果去替代。  
+当前仓库已经明确把这两件事分开：
+
+- 问题一：原始历史销售口径为主，RF 修正版为对照
+- 问题三：RF 需求恢复后的机型分配优化结果
+
+### 3. 问题四是解释模块，不是第二个优化模型
+
+问题四已经不再继续追求“再解一个更复杂的模型”，而是围绕当前最优分配结果做管理解释和结构性建议。
+
+### 4. 仓库中仍保留若干对照线与历史资产
+
+- `results/runs/robustness/`：稳健性对照
+- `results/runs/model_mc20_2026-04-23/`：20 场景原始运行结果，与当前 `model_current` 内容一致
+- `results/runs/model_current_5scenario_archive_2026-04-23/`：原 5 场景结果归档
+- `results/analysis/question4_mc20_2026-04-23/`：20 场景下的第四问分析包
+- `results/runs/variants/`：历史建模变体
+- `data/model_input/network/*.json`：当前已沉淀的网络输入资产
+
+这些内容仍然重要，但不应覆盖当前主线。
+
+## 仓库结构
+
+### 数据
 
 - 原始输入：[`data/raw`](data/raw)
 - 中间结果：[`data/interim`](data/interim)
-- 模型直接输入：[`data/model_input`](data/model_input)
+- 模型输入：[`data/model_input`](data/model_input)
 
-### 代码主线
+### 代码
 
 - 预处理：[`src/preprocessing`](src/preprocessing)
-- 需求分析与还原：[`src/demand_estimation`](src/demand_estimation)
+- 需求分析与恢复：[`src/demand_estimation`](src/demand_estimation)
 - 机型分配建模：[`src/modeling`](src/modeling)
-- 诊断与后分析：[`src/analysis`](src/analysis)
-- 可视化：[`src/visualization`](src/visualization)
+- 结果分析与图形：[`src/analysis`](src/analysis)
+- 展示层可视化：[`src/visualization`](src/visualization)
 
-### 结果主线
+### 输出
 
-- 结构化运行结果：[`results/runs`](results/runs)
+- 结构化结果：[`results/runs`](results/runs)
 - 图形输出：[`results/figures`](results/figures)
 - 网络 HTML：[`results/network`](results/network)
 
-## 现在最重要的事实
+## 后续如果还要继续做什么
 
-### 1. 当前权威任务来源是题目文档，不是代码
+当前四个问题的主线都已经完成。后续如果继续扩展，优先级建议如下：
 
-代码里保留了多版建模尝试，但“什么算完成”应由题目要求决定。任何后续开发都应围绕题目四个问题组织，而不是围绕某个脚本本身组织。
-
-### 2. 当前主线应以题意为准，`RF` 是答题主线，`EM` 是参考线
-
-- [`src/modeling/fleet_assignment_main.py`](src/modeling/fleet_assignment_main.py) 读取 `data/model_input/demand/product_info_rf_predicted.json`
-- [`src/modeling/fleet_assignment_robust.py`](src/modeling/fleet_assignment_robust.py) 读取 `data/model_input/demand/product_info_em_restored.json`
-
-这不只是“模型形式不同”，还意味着两者的项目角色不同：
-
-- `RF + main model` 更符合题目要求，是当前默认答题主线。
-- `EM + robust model` 更像对照实验或稳健性补充，不宜直接替代题目主线。
-
-### 3. `Monte Carlo` 已经尝试，但当前是阻塞点
-
-项目已经尝试在需求还原之后进一步模拟需求波动，高场景数 `Monte Carlo` 方案会因为内存问题失败，表现为运行时 `out of memory`。
-
-因此当前状态是：
-
-- “需求还原”已经有可用结果。
-- “需求波动模拟”保留为轻量版本，默认场景数固定为 `5`。
-- 任何接手开发的人都不应再把“大规模场景扩展”当成主要工作方向。
-
-### 4. 网络输入目前是已沉淀产物，不是完整可重建产物
-
-当前建模所依赖的这三份 JSON 已存在：
-
-- `data/model_input/network/airport_timeline.json`
-- `data/model_input/network/leg_to_products.json`
-- `data/model_input/network/super_flight_schedule.json`
-
-但当前 `src/` 里没有一条完整、清晰、单一入口的脚本去重新生成这三份文件。它们现在更像“已整理好的项目资产”。开发者在改模型前，需要先意识到这一点。
-
-### 5. 结果目录保存的是“历史实验状态”，不全是当前代码刚跑出来的
-
-特别是：
-
-- `results/runs/model_current/` 对应当前主模型目录
-- `results/runs/robustness/` 对应稳健模型结果
-- `results/runs/variants/` 是历史版本试验
-- `results/runs/root_current/` 含部分旧式输出，如 `assignment.csv`
-
-不要默认所有结果目录都来自同一版代码。
-
-## 当前代码地图
-
-| 区域 | 当前作用 | 接手时的重点 |
-| --- | --- | --- |
-| [`src/preprocessing`](src/preprocessing) | 从原始航班与产品销售表生成中间表 | 看清哪些中间表仍在被后续脚本使用 |
-| [`src/demand_estimation`](src/demand_estimation) | 建立 RF 主线与 EM 对照线 | 先确认题目要求决定了 RF 才是正式答题路线 |
-| [`src/modeling`](src/modeling) | 当前最核心的优化模型代码 | 优先读主模型，再读稳健模型，并注意 Monte Carlo 当前 OOM |
-| [`src/analysis`](src/analysis) | 截断分析与结果诊断 | 主要服务题目解释与报告支撑 |
-| [`src/visualization`](src/visualization) | 生成网络图和结果图 | 多数是展示层，不是核心建模层 |
-| [`archive`](archive) | 保留旧脚本与旧资源 | 除非追溯来源，否则不要优先改这里 |
-
-## 推荐把它理解成三层
-
-1. `题目层`  
-   定义最终要回答什么问题。
-
-2. `资产层`  
-   包括原始数据、中间数据、模型输入 JSON 和历史结果。
-
-3. `求解层`  
-   包括需求还原、机型分配模型、分析与可视化脚本。
-
-后续开发最容易出问题的地方，通常不是求解器，而是“题目目标、输入口径、波动模拟状态、结果目录”这四者没有对齐。
-
-## 当前开发重点
-
-当前开发重点已经从“继续改模型结构”切换为“按第四问完善输出端”。  
-具体规格见：
-
-- [`docs/final_model_spec.md`](docs/final_model_spec.md)
-- [`docs/question4_output_plan.md`](docs/question4_output_plan.md)
-
-## 当前已补的接管文档
-
-- [`docs/problem_statement/README.md`](docs/problem_statement/README.md)
-- [`src/preprocessing/README.md`](src/preprocessing/README.md)
-- [`src/demand_estimation/README.md`](src/demand_estimation/README.md)
-- [`src/modeling/README.md`](src/modeling/README.md)
-- [`src/modeling/variants/README.md`](src/modeling/variants/README.md)
-- [`src/analysis/README.md`](src/analysis/README.md)
-- [`src/visualization/README.md`](src/visualization/README.md)
-- [`task.md`](task.md)
+1. 压缩和统一最终报告语言
+2. 如果确实需要，再补问题一的利润比较口径
+3. 将“零需求恢复”作为独立分支单独研究
+4. 如有需要，再恢复 `network` JSON 的端到端生成链路
